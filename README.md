@@ -1,8 +1,8 @@
 # spring-cloud-with-netflix
 spring boot:2.3.6.RELEASE and spring cloud: Hoxton.SR3
 
-# discovery-server
-Independent/clustered service registry - port 8082
+# server-discovery
+Independent service registry - running on port 8082
   - Add 'spring-cloud-starter-netflix-eureka-server' dependency
   - Add annotation '@EnableEurekaServer' to main application class
   - Add below configurations to application.yml file
@@ -19,8 +19,8 @@ Independent/clustered service registry - port 8082
           register-with-eureka: false
           fetch-registry: false
   ```
-# config-server
-Distributed configuration management - registered to discovery server - port 8081
+# server-config
+Distributed configuration management - Registered with discovery server - running on port 8081
   - Add 'spring-cloud-config-server' and spring-cloud-starter-netflix-eureka-client' dependencies
   - Add annotations '@EnableConfigServer' and '@EnableEurekaClient' to main application class
   - Add configurations to bootstap.yml file either to connect git or local folder path
@@ -44,8 +44,8 @@ Distributed configuration management - registered to discovery server - port 808
   ```
   - Add each microservices configuration files under the folder 'config-repo'
 
-# gateway-server
-API gateway service - registered to discovery server - port 8080
+# server-gateway
+API gateway service - registered with discovery server - running on port 8080
   - Add 'spring-cloud-starter-netflix-zuul', 'spring-cloud-starter-config' and 'spring-cloud-starter-netflix-eureka-client' dependencies
   - Add annotations '@EnableZuulProxy' and '@EnableEurekaClient' to main application class
   - Add below configurations to bootstrap.yml file
@@ -59,3 +59,30 @@ API gateway service - registered to discovery server - port 8080
           config:
             uri: http://localhost:8081
   ```
+# service-account
+Running on port 8090
+  - Service to manage accounts of a customer. Each account belongs to a single customer
+  - Registered with discovery server
+  - Fetch configuration details from config server
+  - Runs with in memory account details
+  
+# service-customer
+Running on port 8091
+  - Service to manage each customer. Each customer can have multiple accounts
+  - - Registered with discovery server
+  - Fetch configuration details from config server
+  - Runs with in memory account details
+  - Fetches list of account details of a customer from account-service through spring cloud Feign Clients
+  
+# Others
+### Intercommunication between micro services by using Spring Cloud Feign Clients 
+  - Add 'spring-cloud-starter-openfeign' dependency
+  - Add annotation '@EnableFeignClients' to main application class
+  - Add required Feign Client Classes
+    ```
+      @FeignClient(name = "account-service")
+      public interface AccountServiceClient {
+        @GetMapping("/account/customer/{customerId}")
+        List<Account> findByCustomerId(@PathVariable("customerId") Long id);
+      }
+    ```
