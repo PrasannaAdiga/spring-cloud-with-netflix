@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'com.learning.shopbiz'
+group = 'com.learning.cloud'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -14,11 +14,10 @@ repositories {
 }
 
 ext {
-	set('springCloudVersion', "Hoxton.SR9")
+	set('springCloudVersion', "Hoxton.SR3")
 }
 
 dependencies {
-	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

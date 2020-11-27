@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native # To connect to local folder path
+  cloud:
+    config:
+      server:
+        native:
+          searchLocations: classpath:/config-repo
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8082/eureka/

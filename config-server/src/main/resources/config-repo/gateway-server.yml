@@ -1,0 +1,11 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8082/eureka/
+
+zuul:
+  routes:
+    discovery-server:
+      path: /discovery-server/**
+      sensitive-headers: Set-Cookie,Authorization
+      url: http://localhost:8082
