@@ -75,7 +75,7 @@ Running on port 8091
   - Fetches list of account details of a customer from account-service through spring cloud Feign Clients
   
 # Others
-### Intercommunication between micro services by using Spring Cloud Feign Clients 
+### To intercommunicate between micro services use Spring Cloud Feign Clients 
   - Add 'spring-cloud-starter-openfeign' dependency
   - Add annotation '@EnableFeignClients' to main application class
   - Add required Feign Client Classes
@@ -85,4 +85,11 @@ Running on port 8091
         @GetMapping("/account/customer/{customerId}")
         List<Account> findByCustomerId(@PathVariable("customerId") Long id);
       }
+    ```
+### To add the logger details in each microservices use Lombok
+  - Use the Lombok annotation @Slf4j
+  - create ObjetMapper in each class, wherever log details are needed
+  - Use methods in the log objects
+    ```
+      log.info("Products found: {}", objectMapper.writeValueAsString(products));
     ```

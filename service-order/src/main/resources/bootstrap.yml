@@ -1,0 +1,9 @@
+server:
+  port: 8093
+
+spring:
+  application:
+    name: order-service
+  cloud:
+    config:
+      uri: http://localhosr:8081
