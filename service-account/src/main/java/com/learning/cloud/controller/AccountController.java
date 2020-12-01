@@ -25,6 +25,11 @@ public class AccountController {
         return accountRepository.add(account);
     }
 
+    @PostMapping("/ids")
+    public List<Account> find(@RequestBody List<Long> ids) {
+        return accountRepository.find(ids);
+    }
+
     @PutMapping
     public Account update(@RequestBody Account account) {
         return accountRepository.update(account);
@@ -42,11 +47,6 @@ public class AccountController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         accountRepository.delete(id);
-    }
-
-    @GetMapping("/ids")
-    public List<Account> find(@RequestBody List<Long> ids) {
-        return accountRepository.find(ids);
     }
 
     @GetMapping("/{id}")

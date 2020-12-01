@@ -25,6 +25,13 @@ public class ProductController {
         return productRepository.add(product);
     }
 
+    @PostMapping("/ids")
+    public List<Product> find(@RequestBody List<Long> ids) throws JsonProcessingException {
+        List<Product> products = productRepository.find(ids);
+        log.info("Products found: {}", objectMapper.writeValueAsString(Collections.singletonMap("Count", products.size())));
+        return products;
+    }
+
     @PutMapping
     public Product update(@RequestBody Product product) {
         return productRepository.update(product);
@@ -40,10 +47,4 @@ public class ProductController {
         return productRepository.findById(id);
     }
 
-    @GetMapping("/ids")
-    public List<Product> find(@RequestBody List<Long> ids) throws JsonProcessingException {
-        List<Product> products = productRepository.find(ids);
-        log.info("Products found: {}", objectMapper.writeValueAsString(Collections.singletonMap("Count", products.size())));
-        return productRepository.find(ids);
-    }
 }

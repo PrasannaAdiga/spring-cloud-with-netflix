@@ -1,0 +1,55 @@
+version: '3.5'
+services:
+  server-discovery:
+    image: server-discovery:0.0.1-SNAPSHOT
+    container_name: server-discovery
+    ports:
+      - "8082:8082"
+
+  server-config:
+    image: server-config:0.0.1-SNAPSHOT
+    container_name: server-config
+    ports:
+      - "8081:8081"    
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://server-discovery:8082/eureka  
+
+  server-gateway:
+    image: server-gateway:0.0.1-SNAPSHOT
+    container_name: server-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker  
+
+  account-service:
+    image: service-account:0.0.1-SNAPSHOT
+    container_name: account-service
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker  
+
+  customer-service:
+    image: service-customer:0.0.1-SNAPSHOT
+    container_name: customer-service
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker  
+    
+  product-service:
+    image: service-product:0.0.1-SNAPSHOT
+    container_name: product-service
+    ports:
+      - "8092:8092"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker   
+    
+  order-service:
+    image: service-order:0.0.1-SNAPSHOT
+    container_name: order-service
+    ports:
+      - "8093:8093"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker

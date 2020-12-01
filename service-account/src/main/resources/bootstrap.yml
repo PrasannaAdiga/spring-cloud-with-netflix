@@ -1,9 +1,30 @@
 server:
   port: 8090
-
 spring:
   application:
     name: account-service
   cloud:
     config:
       uri: http://localhost:8081
+      fail-fast: true
+      retry:
+        initial-interval: 60000
+        multiplier: 1.5
+        max-attempts: 1000
+        max-interval: 5000
+---
+server:
+  port: 8090
+spring:
+  profiles: docker
+  application:
+    name: account-service
+  cloud:
+    config:
+      uri: http://server-config:8081
+      fail-fast: true
+      retry:
+        initial-interval: 60000
+        multiplier: 1.5
+        max-attempts: 1000
+        max-interval: 5000

@@ -69,13 +69,43 @@ Running on port 8090
 # service-customer
 Running on port 8091
   - Service to manage each customer. Each customer can have multiple accounts
-  - - Registered with discovery server
+  - Registered with discovery server
   - Fetch configuration details from config server
   - Runs with in memory account details
   - Fetches list of account details of a customer from account-service through spring cloud Feign Clients
+
+# To containerize and run different microservices 
+  - cd to root folder
+  - Run the script file './package-projects.sh'. Running this script file will produce the docker images of each microservices
+  - To run each microservices - 'docker-compose up -d' 
   
 # Others
-### To intercommunicate between micro services use Spring Cloud Feign Clients 
+### Spring Profile
+To have separate configurations for each environment
+  - Create different configurations for each profiles, either in config-server or in each micro services
+  - Create one such profile for docker, where service's host can be given as each service-name instead of 'localhost', so that services can be discoverable inside docker containers
+    ```
+      ---
+      spring:
+        profiles: docker
+      eureka:
+        client:
+          serviceUrl:
+            defaultZone: http://server-discovery:8082/eureka/
+    ```
+  - Profiles can be activated for each services in docker-compose.yml file through environment variable
+    ```
+      environment:
+        SPRING_PROFILES_ACTIVE: docker  
+    ```  
+
+### Spring Retry 
+To run a microservice, after its dependent micro services are ready
+  - Use spring retry plugin, to make each microservice to retry connecting to other dependent micro serivces until the dependent micro service is up and healthy. Spring retry plugin provides many configurations which we can use
+
+
+### Feign Client
+To intercommunicate between each micro services 
   - Add 'spring-cloud-starter-openfeign' dependency
   - Add annotation '@EnableFeignClients' to main application class
   - Add required Feign Client Classes
@@ -86,7 +116,17 @@ Running on port 8091
         List<Account> findByCustomerId(@PathVariable("customerId") Long id);
       }
     ```
-### To add the logger details in each microservices use Lombok
+  - Also increase the connection and read timeout of feign client, so that connection timeout error can be solved, while communicating between services
+    ```
+      feign:
+        client:
+          config:
+            default:
+              connectTimeout: 160000000
+              readTimeout: 160000000
+    ```
+### Lombok
+To add the logger details in each microservices
   - Use the Lombok annotation @Slf4j
   - create ObjetMapper in each class, wherever log details are needed
   - Use methods in the log objects

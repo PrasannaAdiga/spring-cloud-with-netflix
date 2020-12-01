@@ -30,6 +30,11 @@ public class CustomerController {
         return customerRepository.add(customer);
     }
 
+    @PostMapping("/ids")
+    public List<Customer> find(@RequestBody List<Long> ids) {
+        return customerRepository.find(ids);
+    }
+
     @PutMapping
     public Customer update(@RequestBody Customer customer) {
         return customerRepository.update(customer);
@@ -49,15 +54,9 @@ public class CustomerController {
         return customer;
     }
 
-
     @GetMapping("/{id}")
     public Customer findById(@PathVariable Long id) {
         return customerRepository.findById(id);
-    }
-
-    @GetMapping("/ids")
-    public List<Customer> find(@RequestBody List<Long> ids) {
-        return customerRepository.find(ids);
     }
 
 }

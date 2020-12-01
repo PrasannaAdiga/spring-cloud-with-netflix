@@ -1,12 +1,14 @@
 package com.learning.cloud.repository;
 
 import com.learning.cloud.entity.Order;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Repository
 public class OrderRepository {
     private List<Order> orders = new ArrayList<>();
 
@@ -17,7 +19,7 @@ public class OrderRepository {
     }
 
     public Order update(Order order) {
-        orders.set(order.getId().intValue() + 1, order);
+        orders.set(order.getId().intValue() - 1, order);
         return order;
     }
 
