@@ -1,8 +1,8 @@
 # spring-cloud-with-netflix
 spring boot:2.3.6.RELEASE and spring cloud: Hoxton.SR3
 
-# server-discovery
-Independent service registry - running on port 8082
+# server-discovery 
+Independent service registry - running on port 8082 - By using netflix Eureka plugin
   - Add 'spring-cloud-starter-netflix-eureka-server' dependency
   - Add annotation '@EnableEurekaServer' to main application class
   - Add below configurations to application.yml file
@@ -19,8 +19,8 @@ Independent service registry - running on port 8082
           register-with-eureka: false
           fetch-registry: false
   ```
-# server-config
-Distributed configuration management - Registered with discovery server - running on port 8081
+# server-config 
+Distributed configuration management - Registered with discovery server - running on port 8081 By using spring cloud config
   - Add 'spring-cloud-config-server' and spring-cloud-starter-netflix-eureka-client' dependencies
   - Add annotations '@EnableConfigServer' and '@EnableEurekaClient' to main application class
   - Add configurations to bootstap.yml file either to connect git or local folder path
@@ -45,7 +45,7 @@ Distributed configuration management - Registered with discovery server - runnin
   - Add each microservices configuration files under the folder 'config-repo'
 
 # server-gateway
-API gateway service - registered with discovery server - running on port 8080
+API gateway service - registered with discovery server - running on port 8080 - By using netflix Zuul plugin which by default uses Ribbon as a client side load balancer
   - Add 'spring-cloud-starter-netflix-zuul', 'spring-cloud-starter-config' and 'spring-cloud-starter-netflix-eureka-client' dependencies
   - Add annotations '@EnableZuulProxy' and '@EnableEurekaClient' to main application class
   - Add below configurations to bootstrap.yml file
@@ -60,26 +60,49 @@ API gateway service - registered with discovery server - running on port 8080
             uri: http://localhost:8081
   ```
 # service-account
-Running on port 8090
+Running on port 8090 - Microservice developed by using spring boot
   - Service to manage accounts of a customer. Each account belongs to a single customer
   - Registered with discovery server
   - Fetch configuration details from config server
   - Runs with in memory account details
   
 # service-customer
-Running on port 8091
+Running on port 8091 - Microservice developed by using spring boot
   - Service to manage each customer. Each customer can have multiple accounts
   - Registered with discovery server
   - Fetch configuration details from config server
   - Runs with in memory account details
   - Fetches list of account details of a customer from account-service through spring cloud Feign Clients
 
-# To containerize and run different microservices 
+# service-product
+Running on port 8092 - Microservice developed by using spring boot
+  - Service to manage each product
+  - Registered with discovery server
+  - Fetch configuration details from config server
+  - Runs with in memory product details
+  
+# service-order
+Running on port 8093 - Microservice developed by using spring boot
+  - Service to manage each order. Each order will be created by a customer with their specific account by adding single or multiple products.
+  - Registered with discovery server
+  - Fetch configuration details from config server
+  - Fetches customer informations along with their corresponding list of accounts from customer-service
+  - Fetches each product informations from product-service
+  - Keeps in memory order details
+  
+# Others
+# Docker
+To containerize and run different microservices 
   - cd to root folder
   - Run the script file './package-projects.sh'. Running this script file will produce the docker images of each microservices
   - To run each microservices - 'docker-compose up -d' 
-  
-# Others
+
+### Buildpacks
+  - To create docker image for each microservices without using any plugin like 'JIB' or without having any Dockerfile, use the technique Buildpack. By default latest spring boot provides support for building docker images through Buildpacks by running the command './gradlew bootBuildImage'
+
+### Docker Compose
+  - To run each microservices by using already existing docker images and setting up other required configurations  
+
 ### Spring Profile
 To have separate configurations for each environment
   - Create different configurations for each profiles, either in config-server or in each micro services
