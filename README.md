@@ -91,7 +91,7 @@ Running on port 8093 - Microservice developed by using spring boot
   - Keeps in memory order details
   
 # Others
-# Docker
+### Docker
 To containerize and run different microservices 
   - cd to root folder
   - Run the script file './package-projects.sh'. Running this script file will produce the docker images of each microservices
@@ -122,6 +122,37 @@ To have separate configurations for each environment
         SPRING_PROFILES_ACTIVE: docker  
     ```  
 
+### Spring Boot Actuator
+To Provide project specific informations
+  - Add the dependency 'spring-boot-starter-actuator'
+  - By default this plugin activates only 'health' and 'info' endpoints
+  - To add build related informations in to 'info' endpoint, add the below to build.gradle file of each micro services
+    ```
+      springBoot {
+        buildInfo()
+      }
+    ```
+    which produces the info endpoint as 
+    ```
+      {
+        "build": {
+          "artifact": "service-product",
+          "name": "service-product",
+          "time": "2020-12-04T05:47:02.805Z",
+          "version": "0.0.1-SNAPSHOT",
+          "group": "com.learning.cloud"
+        }
+      }
+    ```
+  - To activate all other endpoints provided by the actuator plugin, use the below configuration 
+    ```
+      management:
+        endpoints:
+          web:
+            exposure:
+              include: "*"
+    ```
+    
 ### Spring Retry 
 To run a microservice, after its dependent micro services are ready
   - Use spring retry plugin, to make each microservice to retry connecting to other dependent micro serivces until the dependent micro service is up and healthy. Spring retry plugin provides many configurations which we can use

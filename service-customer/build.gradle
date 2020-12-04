@@ -22,6 +22,10 @@ ext {
 	set('springCloudVersion', "Hoxton.SR9")
 }
 
+springBoot {
+	buildInfo()
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
