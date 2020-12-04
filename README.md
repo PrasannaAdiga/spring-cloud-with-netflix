@@ -104,7 +104,7 @@ To containerize and run different microservices
   - To run each microservices by using already existing docker images and setting up other required configurations  
 
 ### Spring Profile
-To have separate configurations for each environment
+To provide separate configurations for different environments
   - Create different configurations for each profiles, either in config-server or in each micro services
   - Create one such profile for docker, where service's host can be given as each service-name instead of 'localhost', so that services can be discoverable inside docker containers
     ```
@@ -123,7 +123,7 @@ To have separate configurations for each environment
     ```  
 
 ### Spring Boot Actuator
-To Provide project specific informations
+To automate providing infrastructure and application specific metrics data
   - Add the dependency 'spring-boot-starter-actuator'
   - By default this plugin activates only 'health' and 'info' endpoints
   - To add build related informations in to 'info' endpoint, add the below to build.gradle file of each micro services
@@ -152,11 +152,17 @@ To Provide project specific informations
             exposure:
               include: "*"
     ```
-    
+
+### Spring Docs OpenAPI
+To automate the generation of API documentation
+  - Add the dependencies 'springdoc-openapi-ui' and 'springdoc-openapi-webmvc-core'
+  - Run the spring boot application
+  - Access the yml version of api doc at 'host:port/v3/api-docs'
+  - Access the html version of api doc at 'host:port/swagger-ui.html'
+
 ### Spring Retry 
 To run a microservice, after its dependent micro services are ready
   - Use spring retry plugin, to make each microservice to retry connecting to other dependent micro serivces until the dependent micro service is up and healthy. Spring retry plugin provides many configurations which we can use
-
 
 ### Feign Client
 To intercommunicate between each micro services 
@@ -179,6 +185,7 @@ To intercommunicate between each micro services
               connectTimeout: 160000000
               readTimeout: 160000000
     ```
+    
 ### Lombok
 To add the logger details in each microservices
   - Use the Lombok annotation @Slf4j
