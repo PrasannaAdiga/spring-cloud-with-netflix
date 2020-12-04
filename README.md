@@ -90,12 +90,14 @@ Running on port 8093 - Microservice developed by using spring boot
   - Fetches each product informations from product-service
   - Keeps in memory order details
   
-# Others
-### Docker
-To containerize and run different microservices 
+# To Containerize and run microservices  
   - cd to root folder
   - Run the script file './package-projects.sh'. Running this script file will produce the docker images of each microservices
   - To run each microservices - 'docker-compose up -d' 
+
+# Others
+### Docker
+To containerize and run different microservices 
 
 ### Buildpacks
   - To create docker image for each microservices without using any plugin like 'JIB' or without having any Dockerfile, use the technique Buildpack. By default latest spring boot provides support for building docker images through Buildpacks by running the command './gradlew bootBuildImage'
@@ -151,7 +153,28 @@ To automate providing infrastructure and application specific metrics data
           web:
             exposure:
               include: "*"
+        enpoint:
+          health:
+            show-details: always #To show other details in health endpoint 
     ```
+  - View the helath information at 'http://host:port/actuator/health' and information at 'http://host:port/actuator/info'
+
+### Prometheus
+To alert and monitoring system metrics
+  - Add the dependency 'micrometer-registry-promeheus'
+  - Add the below configuraions to expose the metrics endpoint by spring boot actuator
+    ```
+      management:
+        endpoints:
+          web:
+            exposure:
+              include: "*"
+        enpoint:
+          health:
+            show-details: always
+    ``` 
+  - With the above plugin in place, micrometer generates the metrics in the format as required by the promeheus
+  - View the metrics related to promeheus at 'http://host:port/actuator/prometheus'
 
 ### Spring Docs OpenAPI
 To automate the generation of API documentation
@@ -185,7 +208,7 @@ To intercommunicate between each micro services
               connectTimeout: 160000000
               readTimeout: 160000000
     ```
-    
+
 ### Lombok
 To add the logger details in each microservices
   - Use the Lombok annotation @Slf4j
