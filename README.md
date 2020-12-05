@@ -176,6 +176,13 @@ To alert and monitoring system metrics
   - With the above plugin in place, micrometer generates the metrics in the format as required by the promeheus
   - View the metrics related to promeheus at 'http://host:port/actuator/prometheus'
 
+### Logback
+To write application logs into a file
+  - Add the dependency 'logstash-logback-encoder', which converts the text format application logs to json foramt which is required for the Logstash
+  - Add the logback configuration file 'logback-spring.xml' in the application resource path to store the application logs into either file/console/send it directly to logstash
+  Note: Use the absolute path for the file location instead of relative path
+
+
 ### Spring Docs OpenAPI
 To automate the generation of API documentation
   - Add the dependencies 'springdoc-openapi-ui' and 'springdoc-openapi-webmvc-core'
