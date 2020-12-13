@@ -2,7 +2,7 @@
 spring boot:2.3.6.RELEASE and spring cloud: Hoxton.SR3
 
 # server-discovery 
-Independent service registry - running on port 8082 - By using netflix Eureka plugin
+Service registry pattern - By using netflix Eureka Server
   - Add 'spring-cloud-starter-netflix-eureka-server' dependency
   - Add annotation '@EnableEurekaServer' to main application class
   - Add below configurations to application.yml file
@@ -20,8 +20,8 @@ Independent service registry - running on port 8082 - By using netflix Eureka pl
           fetch-registry: false
   ```
 # server-config 
-Distributed configuration management - Registered with discovery server - running on port 8081 By using spring cloud config
-  - Add 'spring-cloud-config-server' and spring-cloud-starter-netflix-eureka-client' dependencies
+Distributed configuration management pattern - Registered with discovery server - By using spring cloud config
+  - Add 'spring-cloud-config-server' and 'spring-cloud-starter-netflix-eureka-client' dependencies
   - Add annotations '@EnableConfigServer' and '@EnableEurekaClient' to main application class
   - Add configurations to bootstap.yml file either to connect git or local folder path
   ```
@@ -127,7 +127,7 @@ To provide separate configurations for different environments
 ### Spring Boot Actuator
 To automate providing infrastructure and application specific metrics data
   - Add the dependency 'spring-boot-starter-actuator'
-  - By default this plugin activates only 'health' and 'info' endpoints
+  - By default, this plugin activates only 'health' and 'info' endpoints
   - To add build related informations in to 'info' endpoint, add the below to build.gradle file of each micro services
     ```
       springBoot {
@@ -161,7 +161,7 @@ To automate providing infrastructure and application specific metrics data
 
 ### Prometheus
 To alert and monitoring system metrics
-  - Add the dependency 'micrometer-registry-promeheus'
+  - Add the dependency 'micrometer-registry-prometheus'
   - Add the below configuraions to expose the metrics endpoint by spring boot actuator
     ```
       management:
@@ -182,6 +182,24 @@ To write application logs into a file
   - Add the logback configuration file 'logback-spring.xml' in the application resource path to store the application logs into either file/console/send it directly to logstash
   Note: Use the absolute path for the file location instead of relative path
 
+### Logging
+  - Use the Lombok annotation @Slf4j in each java classes wherever we need to write logs
+  - Use log level 'debug' only when we need to log values of some variable in a complex logic
+  - Use the log level 'info' whenever some new logic is started or finished with proper input or output values. Also, to log request/response values whenever system calls any external servers
+  - Use the log level 'warning' in situations where the code execution might cause some side effect later
+  - Use the log level 'error' in catch blocks
+  - By default, set the log level as 'error' for the ROOT log
+  - Also set the log level as info for application's root package, if there are not so many info logs exists in code
+  - Note that, by default if we activate the endpoint 'logger' of spring boot actuator, then the actuator provides a REST endpoint through which we can chang the log level of any package or plugin without restarting the server. We can make this just by executing the API with required data
+  
+
+### Validation and Exception Handling
+  - Use validator annotations like @NotEmpty, @NotNull, @NotBlank, @Size, @Min, @Max, @Positive etc in the domain/entity classes along with proper exception message details for the user to read
+  - In the RestController use the annotation @Validated at the controller level and @Valid at the method level
+  - So Hibernate validator will call the validation logic once the API is called and then throws the corresponding exception if the validation fails
+  - Create a class with @RestControllerAdvice which extends the ResponseEntityExceptionHandler 
+  - The above class will work as GlobalExceptionHandler where we can override any existing spring exception handling logic to provide custom logic, or we can write handler logic for our Custom User Defined exceptions
+  - Here we can create exception message object with a meaningful message along with proper error code send it back to user
 
 ### Spring Docs OpenAPI
 To automate the generation of API documentation
@@ -194,7 +212,7 @@ To automate the generation of API documentation
 To run a microservice, after its dependent micro services are ready
   - Use spring retry plugin, to make each microservice to retry connecting to other dependent micro serivces until the dependent micro service is up and healthy. Spring retry plugin provides many configurations which we can use
 
-### Feign Client
+### Spring Cloud OpenFeign
 To intercommunicate between each micro services 
   - Add 'spring-cloud-starter-openfeign' dependency
   - Add annotation '@EnableFeignClients' to main application class
@@ -224,3 +242,26 @@ To add the logger details in each microservices
     ```
       log.info("Products found: {}", objectMapper.writeValueAsString(products));
     ```
+### Spring developer tools
+To help local development
+    - Lombok
+    - spring boot devtools - an automatic restart of server on code changes
+    - spring boot configuration processor - helps developers in providing available configuration options in yml/properties files
+    
+### Cross Cutting Concerns
+ - Externalize configurations: Can be achieved by using multiple yml/properties files with Spring Cloud Config  or Consul Config
+ - Logging: Can be implemented by using Logback configuration files(By default spring boot supports it) and then send these log details to Elastic Search with the help of Logstash and finally can be visualized each log details by using Kibana
+ - Exception Handling: Can be implemented with the help of annotations provided by 'spring-boot-starter-validation' plugin and Global exception handler in Spring Boot (Refer: https://devwithus.com/exception-handling-for-rest-api-with-spring-boot/)
+ - Security(Authentication): Can be implemented by the support available in spring-boot-starter-security plugin
+ - Security(Authorization): Can be implemented by OAuth2 Authorization server along with spring boot security and JWT
+ - Alerts and Monitoring: Spring boot actuator along with MicroMeter provides many infrastructures and application related metrics, which can be send to Prometheus easily and later can be visualized in Grafana
+ - Distributed Tracing: Each API request can be traced across multiple microservices easily with the help of Correlation ID provided by tools like Zipkin and Sleuth
+ - API Documentation: By using Swagger or Spring Docs Open API or Spring Rest Docs
+ - All the above cross-cutting concerns can also be implemented at API Gateway server(Basically to requests coming from client to server) or by using Serive Mesh/sidecar proxy tool(Requests coming from one server to another)
+
+ ### Microservice Patterns
+ - Service Discovery or Serive Registry: By using spring cloud Netflix Eureka or Consul Service Discovery
+ - Distributed Configuration: Configurations of each microservice can be externalized by using spring cloud config or consul config
+ - API Gateway or Gateway server: By using Spring cloud netflix Zuul or Spring Cloud API Gateway or Kong API Gateway
+ - Circuit Breaker: By using Ribbon or Resilience4J
+ - Client side load balancing: By using Hystrix or Spring cloud load balancer

@@ -1,62 +1,1 @@
-package com.learning.cloud.controller;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.learning.cloud.entity.Account;
-import com.learning.cloud.repository.AccountRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
-
-@RestController
-@RequestMapping("/account")
-@Slf4j
-public class AccountController {
-    @Autowired
-    private AccountRepository accountRepository;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    @PostMapping
-    public Account add(@RequestBody Account account) {
-        return accountRepository.add(account);
-    }
-
-    @PostMapping("/ids")
-    public List<Account> find(@RequestBody List<Long> ids) {
-        return accountRepository.find(ids);
-    }
-
-    @PutMapping
-    public Account update(@RequestBody Account account) {
-        return accountRepository.update(account);
-    }
-
-    @PutMapping("/{id}/withdraw/{amount}")
-    public Account withdraw(@PathVariable("id") Long accountId, @PathVariable("amount") int amount) throws JsonProcessingException {
-        Account account = accountRepository.findById(accountId);
-        log.info("Account found: {}", objectMapper.writeValueAsString(account));
-        account.setBalance(account.getBalance() - amount);
-        log.info("Account balance: {}", objectMapper.writeValueAsString(Collections.singletonMap("balance", account.getBalance())));
-        return accountRepository.update(account);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        accountRepository.delete(id);
-    }
-
-    @GetMapping("/{id}")
-    public Account findById(@PathVariable("id") Long id) {
-        return accountRepository.findById(id);
-    }
-
-    @GetMapping("/customer/{customerId}")
-    public List<Account> findByCustomerId(@PathVariable("customerId") Long customerId) {
-        return accountRepository.findByCustomer(customerId);
-    }
-
-}
+package com.learning.cloud.controller;import com.fasterxml.jackson.core.JsonProcessingException;import com.fasterxml.jackson.databind.ObjectMapper;import com.learning.cloud.entity.Account;import com.learning.cloud.exception.ResourceNotFoundException;import com.learning.cloud.repository.AccountRepository;import lombok.RequiredArgsConstructor;import lombok.extern.slf4j.Slf4j;import org.springframework.http.ResponseEntity;import org.springframework.validation.annotation.Validated;import org.springframework.web.bind.annotation.*;import org.springframework.web.servlet.support.ServletUriComponentsBuilder;import javax.validation.Valid;import javax.validation.constraints.*;import java.math.BigDecimal;import java.net.URI;import java.util.Collections;import java.util.List;@RestController@RequestMapping("/account")@Slf4j@Validated@RequiredArgsConstructorpublic class AccountController {    private final AccountRepository accountRepository;    private ObjectMapper objectMapper = new ObjectMapper();    @GetMapping(params = "ids")    public ResponseEntity<List<Account>> findByIds(@RequestParam @NotEmpty(message = "Should contain at-least single Id") List<String> ids) {        return ResponseEntity.ok().body(accountRepository.findByIds(ids));    }    @GetMapping("/{accountNumber}")    public ResponseEntity<Account> findByAccountNumber(@PathVariable("accountNumber")                                                       @Size(min = 1, max = 10, message = "Account number must be 1 to 10 digits only")                                                       @Positive(message = "Account number should be positive value")                                                               String accountNumber) {        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(                () -> new ResourceNotFoundException("Account with id " + accountNumber + " Not Found!"));        return ResponseEntity.ok().body(account);    }    @GetMapping("/customer/{customerId}")    public ResponseEntity<List<Account>> findByCustomerId(@PathVariable("customerId")                                                          @Size(min = 1, max = 3, message = "Customer Id must be 1 to 3 digits only")                                                          @Positive(message = "Customer Id should be positive value")                                                                  String customerId) {        return ResponseEntity.ok().body(accountRepository.findByCustomerId(customerId));    }    @PostMapping    public ResponseEntity<Object> add(@Valid @RequestBody Account account) {        Account newAccount = accountRepository.add(account);        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newAccount.getId()).toUri();        return ResponseEntity.created(location).build();    }    @PutMapping    public ResponseEntity<Account> update(@Valid @RequestBody Account account) {        accountRepository.findByAccountNumber(account.getNumber()).orElseThrow(                () -> new ResourceNotFoundException("Account with id " + account.getId() + " Not Found!"));        return ResponseEntity.ok().body(accountRepository.update(account));    }    @PutMapping("/{id}/withdraw/{amount}")    public ResponseEntity<Account> withdraw(@PathVariable("id")                                            @Size(min = 1, max = 10, message = "Account number must be 1 to 10 digits only")                                            @Positive(message = "Account number should be positive value")                                                    String accountNumber,                                            @PathVariable("amount")                                            @NotNull(message = "Amount must not be null")                                            @Positive(message = "Withdraw amount must be greater than zero")                                                    int amount) throws JsonProcessingException {        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(                () -> new ResourceNotFoundException("Account with id " + accountNumber + " Not Found!"));        log.info("Account found: {}", objectMapper.writeValueAsString(account));        account.setBalance(account.getBalance().subtract(new BigDecimal(amount)));        log.info("Account balance: {}", objectMapper.writeValueAsString(Collections.singletonMap("balance", account.getBalance())));        return ResponseEntity.ok().body(accountRepository.update(account));    }    @DeleteMapping("/{accountNumber}")    public ResponseEntity<String> delete(@PathVariable("accountNumber")                                         @Size(min = 1, max = 10, message = "Account number must be 1 to 10 digits only")                                         @Positive(message = "Account number should be positive value")                                                 String accountNumber) {        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(                () -> new ResourceNotFoundException("Account with id " + accountNumber + " Not Found!"));        accountRepository.deleteByAccountId(account.getId());        return ResponseEntity.ok().body("Account with number '" + accountNumber + "' is deleted successfully!");    }}

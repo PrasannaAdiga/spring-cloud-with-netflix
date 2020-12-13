@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 
+import java.math.BigDecimal;
+
 @SpringBootApplication
 @EnableEurekaClient
 public class ServiceAccountApplication {
@@ -18,15 +20,15 @@ public class ServiceAccountApplication {
 	@Bean
 	AccountRepository repository() {
 		AccountRepository repository = new AccountRepository();
-		repository.add(new Account("1234567890", 50000, 1L));
-		repository.add(new Account("1234567891", 50000, 1L));
-		repository.add(new Account("1234567892", 50000, 1L));
-		repository.add(new Account("1234567893", 50000, 2L));
-		repository.add(new Account("1234567894", 50000, 2L));
-		repository.add(new Account("1234567895", 50000, 2L));
-		repository.add(new Account("1234567896", 50000, 3L));
-		repository.add(new Account("1234567897", 50000, 3L));
-		repository.add(new Account("1234567898", 50000, 3L));
+		repository.add(new Account("1234567890", new BigDecimal(50000), "1"));
+		repository.add(new Account("1234567891", new BigDecimal(50000), "1"));
+		repository.add(new Account("1234567892", new BigDecimal(50000), "1"));
+		repository.add(new Account("1234567893", new BigDecimal(50000), "2"));
+		repository.add(new Account("1234567894", new BigDecimal(50000), "2"));
+		repository.add(new Account("1234567895", new BigDecimal(50000), "2"));
+		repository.add(new Account("1234567896", new BigDecimal(50000), "3"));
+		repository.add(new Account("1234567897", new BigDecimal(50000), "3"));
+		repository.add(new Account("1234567898", new BigDecimal(50000), "3"));
 		return repository;
 	}
 }
