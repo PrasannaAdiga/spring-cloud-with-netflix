@@ -1,8 +1,24 @@
+#List of configurations specific to profile 'default'
+#Spring Boot Actuator Configurations
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
-  enpoint:
+        include: health, info, metrics
+  endpoint:
     health:
       show-details: always
+#Eureka Naming Server Configuration
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8082/eureka/
+---
+#List of configurations specific to profile 'docker'
+spring:
+  profiles: docker
+#Eureka Naming Server Configuration
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://server-discovery:8082/eureka/

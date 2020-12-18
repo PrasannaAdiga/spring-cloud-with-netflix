@@ -6,6 +6,7 @@ spring:
     name: config-server
   profiles:
     active: native # To connect to local folder path
+  #Spring Cloud Config Server Configurations
   cloud:
     config:
       server:
@@ -13,8 +14,14 @@ spring:
           #uri:
         native:
           searchLocations: classpath:/config-repo
-
+#Eureka Naming Server Configuration
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8082/eureka/
+#Spring Boot Actuator Configurations
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics

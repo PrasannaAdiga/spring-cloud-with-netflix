@@ -1,24 +1,9 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8082/eureka/
+#List of configurations specific to profile 'default'
+#Spring Cloud OpenFeign Configuration
 feign:
   client:
     config:
       default:
-        connectTimeout: 160000000
-        readTimeout: 160000000
----
-spring:
-  profiles: docker
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://server-discovery:8082/eureka/
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 160000000
-        readTimeout: 160000000
-      
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
