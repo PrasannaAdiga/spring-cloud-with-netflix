@@ -25,16 +25,15 @@ public class ProductRepository {
         products.remove(id.intValue() - 1);
     }
 
-    public Product findById(Long id) {
-        Optional<Product> sProduct = products.stream().filter(p -> p.getId().equals(id)).findFirst();
-        if(sProduct.isPresent()) {
-            return sProduct.get();
-        } else {
-            return null;
-        }
+    public Optional<Product> findById(Long id) {
+        return products.stream().filter(p -> p.getId().equals(id)).findFirst();
     }
 
-    public List<Product> find(List<Long> ids) {
+    public Optional<Product> findByName(String name) {
+        return products.stream().filter(p -> p.getName().equals(name)).findFirst();
+    }
+
+    public List<Product> findByIds(List<Long> ids) {
         return products.stream().filter(p -> ids.contains(p.getId())).collect(Collectors.toList());
     }
 }

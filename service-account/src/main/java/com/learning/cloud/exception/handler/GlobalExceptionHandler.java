@@ -1,48 +1,118 @@
 package com.learning.cloud.exception.handler;
 
-import com.learning.cloud.exception.ResourceNotFoundException;
 import com.learning.cloud.exception.message.RestApiErrorMessage;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.Null;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<RestApiErrorMessage> handleConstraintViolationException(final Exception exception, final HttpServletRequest request) {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status, WebRequest request) {
         RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(exception.getMessage())
-                .path(request.getRequestURI())
+                .status(status.value())
+                .error("Validation Errors")
+                .message(ex.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .map(error -> error.getDefaultMessage())
+                        .collect(Collectors.toList()).toString())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
         return ResponseEntity.badRequest().body(restApiErrorMessage);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<RestApiErrorMessage> handleResourceNotFoundException(final Exception exception, final HttpServletRequest request) {
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(
+            TypeMismatchException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
         RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .message(exception.getMessage())
-                .path(request.getRequestURI())
+                .status(status.value())
+                .error("Type Mismatch")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return new ResponseEntity<>(restApiErrorMessage, HttpStatus.NOT_FOUND);
+        return ResponseEntity.badRequest().body(restApiErrorMessage);
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<RestApiErrorMessage> handleNullPointerException(final Exception exception, final HttpServletRequest request) {
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
+            HttpMediaTypeNotSupportedException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Null pointer exception")
-                .message(exception.getMessage())
-                .path(request.getRequestURI())
+                .status(status.value())
+                .error("Invalid JSON")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return new ResponseEntity<>(restApiErrorMessage, HttpStatus.NOT_FOUND);
+        return ResponseEntity.badRequest().body(restApiErrorMessage);
     }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error("Malformed JSON request")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
+                .build();
+        return ResponseEntity.badRequest().body(restApiErrorMessage);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(
+            MissingServletRequestParameterException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
+        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error("Missing Parameters")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
+                .build();
+        return ResponseEntity.badRequest().body(restApiErrorMessage);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(
+            NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error("Method Not Found")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
+                .build();
+        return ResponseEntity.badRequest().body(restApiErrorMessage);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error("Method Not Allowed")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
+                .build();
+        return new ResponseEntity<>(restApiErrorMessage, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
 }
