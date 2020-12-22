@@ -10,6 +10,6 @@ import java.util.List;
 @FeignClient(name = "account-service")
 public interface AccountServiceClient {
 
-    @GetMapping("/account/customer/{customerId}")
-    List<Account> findByCustomerId(@PathVariable("customerId") Long id);
+    @GetMapping("/v1/customers/{customerId}/accounts")
+    List<Account> findAccountsByCustomerId(@PathVariable("customerId") Long id);
 }

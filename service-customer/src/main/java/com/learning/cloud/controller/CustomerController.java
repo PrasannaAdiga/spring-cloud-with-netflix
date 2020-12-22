@@ -6,57 +6,85 @@ import com.learning.cloud.clinet.AccountServiceClient;
 import com.learning.cloud.model.Account;
 import com.learning.cloud.model.Customer;
 import com.learning.cloud.repository.CustomerRepository;
+import exception.ResourceFoundException;
+import exception.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/v1/customers")
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 public class CustomerController {
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountServiceClient accountServiceClient;
+    private final CustomerRepository customerRepository;
+    private final AccountServiceClient accountServiceClient;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @PostMapping
-    public Customer add(@RequestBody Customer customer) {
-        return customerRepository.add(customer);
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> findById(@PathVariable
+                                             @Positive(message = "Customer ID should be positive value")
+                                                     Long id) {
+        Customer customer = checkCustomer(id);
+        return ResponseEntity.ok().body(customer);
     }
 
-    @PostMapping("/ids")
-    public List<Customer> find(@RequestBody List<Long> ids) {
-        return customerRepository.find(ids);
+    @GetMapping(params = "id")
+    public ResponseEntity<List<Customer>> findByIds(@RequestParam
+                                                    @NotEmpty(message = "Should contain at-least single Id")
+                                                            List<Long> ids) {
+        return ResponseEntity.ok().body(customerRepository.findByIds(ids));
+    }
+
+    @PostMapping
+    public ResponseEntity<Customer> add(@Valid @RequestBody Customer customer) {
+        customerRepository.findByName(customer.getName()).ifPresent(c -> {
+            throw new ResourceFoundException("Customer with name " + c.getName() + " already found!");
+        });
+        Customer newCustomer = customerRepository.add(customer);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newCustomer.getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping
-    public Customer update(@RequestBody Customer customer) {
-        return customerRepository.update(customer);
+    public ResponseEntity<Customer> update(@Valid @RequestBody Customer customer) {
+        checkCustomer(customer.getId());
+        return ResponseEntity.ok().body(customerRepository.update(customer));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id")
+                                       @Positive(message = "Customer ID should be positive value")
+                                               Long id) {
+        checkCustomer(id);
         customerRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{id}/withAccounts")
-    public Customer findByIdWithAccounts(@PathVariable("id") Long customerId) throws JsonProcessingException {
-        List<Account> accounts = accountServiceClient.findByCustomerId(customerId);
+    public Customer findByIdWithAccounts(@PathVariable("id")
+                                         @Positive(message = "Customer ID should be positive value")
+                                                 Long customerId) throws JsonProcessingException {
+        List<Account> accounts = accountServiceClient.findAccountsByCustomerId(customerId);
         log.info("Accounts found: {}", objectMapper.writeValueAsString(accounts));
-        Customer customer = customerRepository.findById(customerId);
+        Customer customer = checkCustomer(customerId);
         customer.setAccounts(accounts);
         return customer;
     }
 
-    @GetMapping("/{id}")
-    public Customer findById(@PathVariable Long id) {
-        return customerRepository.findById(id);
+    private Customer checkCustomer(Long id) {
+        return customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer with ID " + id + " not found"));
     }
-
 }

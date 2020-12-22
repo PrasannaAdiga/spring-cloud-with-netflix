@@ -24,17 +24,16 @@ public class CustomerRepository {
         customers.remove(id - 1);
     }
 
-    public List<Customer> find(List<Long> ids) {
-        return customers.stream().filter(c -> ids.contains(c.getId())).collect(Collectors.toList());
+    public Optional<Customer> findById(Long id) {
+        return customers.stream().filter(c -> c.getId().equals(id)).findFirst();
     }
 
-    public Customer findById(Long id) {
-        Optional<Customer> sCustomer = customers.stream().filter(c -> c.getId().equals(id)).findFirst();
-        if(sCustomer.isPresent()) {
-            return sCustomer.get();
-        } else {
-            return null;
-        }
+    public Optional<Customer> findByName(String name) {
+        return customers.stream().filter(c -> c.getName().equals(name)).findFirst();
+    }
+
+    public List<Customer> findByIds(List<Long> ids) {
+        return customers.stream().filter(c -> ids.contains(c.getId())).collect(Collectors.toList());
     }
 
 }

@@ -201,6 +201,17 @@ To write application logs into a file
   - The above class will work as GlobalExceptionHandler where we can override any existing spring exception handling logic to provide custom logic, or we can write handler logic for our Custom User Defined exceptions
   - Here we can create exception message object with a meaningful message along with proper error code send it back to user
 
+### Designing REST APIs
+  - Use @RestController, @RequestMapping, @PathVariable, @RequestParam, @RequestBody, @GetMapping, @PostMapping, @PutMapping, @DeleteMapping annotations wherver required
+  - Use validation related annotations on method arguments, parameters or variables to check the validations
+  - Use proper log details by using @Slf4j annotation and handle the global and custom exception messages
+  - Use the annotation @RequiredArgsConstructor annotation with private final fields to automatically inject the required beans by spring
+  - GET Request: Mainly used for filtering or sorting or searching. To fetch all available records in the pagination format or fetch a record by it's id or fetch few records by list of their ids in the pagination format. Response status will be 200 - Ok.
+  - Post Request: Post method is used to create a new record. Response will be 201 - Created with empty body. Also return the id of the newly created record as a location header
+  - Put Request: Used to update an existing record. Response will be 200 - Ok with the updated record
+  - Delete Request: Used to delete an existing record. Response will be 204 - No Content
+
+
 ### Spring Docs OpenAPI
 To automate the generation of API documentation
   - Add the dependencies 'springdoc-openapi-ui' and 'springdoc-openapi-webmvc-core'
