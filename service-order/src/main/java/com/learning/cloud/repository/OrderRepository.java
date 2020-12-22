@@ -31,13 +31,8 @@ public class OrderRepository {
         return orders.stream().filter(o -> ids.contains(o.getId())).collect(Collectors.toList());
     }
 
-    public Order findById(Long id) {
-        Optional<Order> sOrder = orders.stream().filter(o -> o.getId().equals(id)).findFirst();
-        if(sOrder.isPresent()) {
-            return sOrder.get();
-        } else {
-            return null;
-        }
+    public Optional<Order> findById(Long id) {
+        return orders.stream().filter(o -> o.getId().equals(id)).findFirst();
     }
 
     public int countByCustomerId(Long id) {

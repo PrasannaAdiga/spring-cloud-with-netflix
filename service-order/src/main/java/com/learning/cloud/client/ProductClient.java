@@ -9,6 +9,6 @@ import java.util.List;
 @FeignClient(name = "product-service")
 public interface ProductClient {
 
-    @PostMapping("/product/ids")
-    public List<Product> findByIds(List<Long> ids);
+    @PostMapping("/v1/products/id")
+    List<Product> findByIds(List<Long> ids);
 }

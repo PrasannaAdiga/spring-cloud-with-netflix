@@ -6,38 +6,41 @@ import com.learning.cloud.client.AccountClient;
 import com.learning.cloud.client.CustomerClient;
 import com.learning.cloud.client.ProductClient;
 import com.learning.cloud.entity.*;
+import com.learning.cloud.exception.ResourceNotFoundException;
 import com.learning.cloud.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/v1/orders")
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 public class OrderController {
-    @Autowired
-    private AccountClient accountClient;
-
-    @Autowired
-    private CustomerClient customerClient;
-
-    @Autowired
-    private ProductClient productClient;
-
-    @Autowired
-    private OrderRepository orderRepository;
+    private final AccountClient accountClient;
+    private final CustomerClient customerClient;
+    private final ProductClient productClient;
+    private final OrderRepository orderRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping
-    public Order prepare(@RequestBody Order order) throws JsonProcessingException {
+    public ResponseEntity<Void> prepare(@Valid @RequestBody Order order) throws JsonProcessingException {
         int price = 0;
         List<Product> products = productClient.findByIds(order.getProductId());
+        if(products.isEmpty()) throw new ResourceNotFoundException("Requested product with ID " + order.getProductId() + " is not available!");
         log.info("Products found: {}", objectMapper.writeValueAsString(products));
         Customer customer = customerClient.findByIdWithAccounts(order.getCustomerId());
         log.info("Customer found: {}", objectMapper.writeValueAsString(customer));
@@ -46,7 +49,7 @@ public class OrderController {
         final int priceDiscounted = priceDiscount(price, customer);
         log.info("Discounted price: {}", objectMapper.writeValueAsString(Collections.singletonMap("price", priceDiscounted)));
         Optional<Account> account = customer.getAccounts().stream().filter(a -> a.getBalance() > priceDiscounted).findFirst();
-        if(account.isPresent()) {
+        if (account.isPresent()) {
             order.setAccountId(account.get().getId());
             order.setOrderStatus(OrderStatus.ACCEPTED);
             order.setPrice(priceDiscounted);
@@ -54,13 +57,18 @@ public class OrderController {
         } else {
             order.setOrderStatus(OrderStatus.REJECTED);
             log.info("Account not found: {}", objectMapper.writeValueAsString(customer.getAccounts()));
+            throw new ResourceNotFoundException("Customer with ID " + order.getCustomerId()+ " does not have enough balance in any of their account to order these products!");
         }
-        return orderRepository.add(order);
+        Order newOrder = orderRepository.add(order);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newOrder.getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public Order accept(@PathVariable Long id) throws JsonProcessingException {
-        final Order order = orderRepository.findById(id);
+    public ResponseEntity<Order> accept(@PathVariable
+                        @Positive(message = "Order ID should be positive value")
+                                Long id) throws JsonProcessingException {
+        final Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + " not found!"));
         log.info("Order found: {}", objectMapper.writeValueAsString(order));
         accountClient.withdraw(order.getAccountId(), order.getPrice());
         HashMap<String, Object> logger = new HashMap<>();
@@ -69,13 +77,12 @@ public class OrderController {
         log.info("Account modified: {}", objectMapper.writeValueAsString(logger));
         order.setOrderStatus(OrderStatus.DONE);
         log.info("Order status changed: {}", objectMapper.writeValueAsString(Collections.singletonMap("status", order.getOrderStatus())));
-        orderRepository.update(order);
-        return order;
+        return ResponseEntity.ok().body(orderRepository.update(order));
     }
 
     private int priceDiscount(int price, Customer customer) {
         double discount = 0;
-        switch(customer.getCustomerType()) {
+        switch (customer.getCustomerType()) {
             case REGULER:
                 discount += 0.05;
                 break;

@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 @FeignClient(name = "account-service")
 public interface AccountClient {
 
-    @PutMapping("/account/{accountId}/withdraw/{amount}")
+    @PutMapping("/v1/accounts/{accountId}/withdraw/{amount}")
     public Account withdraw(@PathVariable("accountId") Long id, @PathVariable("amount") int amount);
 }
