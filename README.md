@@ -217,11 +217,24 @@ To write application logs into a file
  - In case of spring, where we will be having spring IoC container filters are used between the client and spring MVC dispatcher servlet which is running inside spring container
  - And Interceptors are used between spring MVC dispatcher servlet and a specific controllers
  - So Basically Filters are used in a web container outside of spring containers and Interceptors are used inside a spring container. So Interceptor can have a complete access on spring context to perform complex logic
- - Use the spring provided filter OncePerRequestFilter if we want to log any request/response which comes to our application from outside clinets. This flietr also used to add any custom header to request/response, to deny certain request before it reaches dispacther servlet, to add authentication check etc
- - Use the spring provided interceptor ClientHttpRequestInterceptor if we want to log any request/response which triggers from our application to outside clients. Through this interceptor we can also add any custom header to request/response, to deny certain request, to add authentication check etc
+ - Use the spring provided filter OncePerRequestFilter if we want to log any request/response which comes to our application from outside clinets. This flietr also used to add any custom header to request/response, to deny certain request before it reaches dispacther servlet, to add authentication check, to log request/response details etc
+ - Use the spring provided interceptor ClientHttpRequestInterceptor if we want to log any request/response which triggers from our application to outside clients by using RestTemplate. Through this interceptor we can also add any custom header to request/response, to deny certain request, to add authentication check, to log request/response objects header, body etc
+ - If we use Feign to make outside client calls and to log the request and response object details we can use the below Feign bean configuration 
+    ```
+      @Bean
+      Logger.Level feignLoggerLevel() {
+          if(log.isDebugEnabled()) {
+              return Logger.Level.FULL;
+          } else {
+              return Logger.Level.BASIC;
+          }
+      }
+    ```
  - Use the spring provided interceptor HandlerInterceptor to get the complete access over any request before it reaches a controller, or after controller return a response and before it render view, or after the view rendered completely. We can ususally set start time in the preHandle method and check for the endtime in afterCompletion method to find total time taken for an REST API to execute.Also we can set unique traceId for each request in the prehandle method and later in the afterCompletion method we can remove these traceId
  - Interceptor to work, it must registered in InterceptorRegistry. For this spring provides a configurer class WebMvcConfigurer, addInterceptor method where new interceptors can be registered in the order
  - Each Interceptor can also configured to get activated only for specific set of URL's
+ - ClientHttpRequestInterceptor to work, it must be set as interceptor to RestTemplate by using restTemplate.setInterceptor method
+ - OncePerRequestFilter to work, it must be set as filter to FilterRegistrationBean by using its setFilter method
 
 ### Spring Docs OpenAPI
 To automate the generation of API documentation
