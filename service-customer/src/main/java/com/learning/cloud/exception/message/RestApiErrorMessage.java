@@ -1,4 +1,4 @@
-package exception.message;
+package com.learning.cloud.exception.message;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

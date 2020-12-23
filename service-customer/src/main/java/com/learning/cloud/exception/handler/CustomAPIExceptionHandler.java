@@ -1,4 +1,4 @@
-package exception.handler;
+package com.learning.cloud.exception.handler;
 
 import com.learning.cloud.exception.ResourceFoundException;
 import com.learning.cloud.exception.ResourceNotFoundException;
@@ -51,7 +51,7 @@ public class CustomAPIExceptionHandler {
     public ResponseEntity<RestApiErrorMessage> handleNullPointerException(final Exception exception, final HttpServletRequest request) {
         RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Null pointer exception")
+                .error("Null pointer com.learning.cloud.exception")
                 .message(exception.getMessage())
                 .path(request.getRequestURI())
                 .build();

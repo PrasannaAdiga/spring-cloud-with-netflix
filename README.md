@@ -266,9 +266,9 @@ To add the logger details in each microservices
     ```
 ### Spring developer tools
 To help local development
-    - Lombok
-    - spring boot devtools - an automatic restart of server on code changes
-    - spring boot configuration processor - helps developers in providing available configuration options in yml/properties files
+  - Lombok
+  - spring boot devtools - an automatic restart of server on code changes
+  - spring boot configuration processor - helps developers in providing available configuration options in yml/properties files
     
 ### Cross Cutting Concerns
  - Externalize configurations: Can be achieved by using multiple yml/properties files with Spring Cloud Config  or Consul Config

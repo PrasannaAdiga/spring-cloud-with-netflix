@@ -1,6 +1,6 @@
-package exception.handler;
+package com.learning.cloud.exception.handler;
 
-import exception.message.RestApiErrorMessage;
+import com.learning.cloud.exception.message.RestApiErrorMessage;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
