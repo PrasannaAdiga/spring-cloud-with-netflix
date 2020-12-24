@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice

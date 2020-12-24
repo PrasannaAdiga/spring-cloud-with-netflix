@@ -218,7 +218,7 @@ To write application logs into a file
  - And Interceptors are used between spring MVC dispatcher servlet and a specific controllers
  - So Basically Filters are used in a web container outside of spring containers and Interceptors are used inside a spring container. So Interceptor can have a complete access on spring context to perform complex logic
  - Use the spring provided filter OncePerRequestFilter if we want to log any request/response which comes to our application from outside clinets. This flietr also used to add any custom header to request/response, to deny certain request before it reaches dispacther servlet, to add authentication check, to log request/response details etc
- - Use the spring provided interceptor ClientHttpRequestInterceptor if we want to log any request/response which triggers from our application to outside clients by using RestTemplate. Through this interceptor we can also add any custom header to request/response, to deny certain request, to add authentication check, to log request/response objects header, body etc
+ - Use the spring provided interceptor ClientHttpRequestInterceptor if we want to log any request/response which triggers from our application to outside clients by using RestTemplate. Through this interceptor we can also add any custom header to request/response, to deny certain request, to add authentication check, to log request/response objects header, body etc (https://howtodoinjava.com/spring-boot2/resttemplate/clienthttprequestinterceptor/ for reference)
  - If we use Feign to make outside client calls and to log the request and response object details we can use the below Feign bean configuration 
     ```
       @Bean
@@ -242,6 +242,26 @@ To automate the generation of API documentation
   - Run the spring boot application
   - Access the yml version of api doc at 'host:port/v3/api-docs'
   - Access the html version of api doc at 'host:port/swagger-ui.html'
+  - Adding ResponseStatus with right status code in each controller's method and each method of @ControllerAdvice will automatically create the right response codes in the doc.
+  - Use the annotations @Operation, @Parameter or @ApiResponse to provide additional details in the document or to provide response details manaually
+  - https://www.baeldung.com/spring-rest-openapi-documentation for reference
+  - To show actuator endpoints in the document we can use the below config
+    ```
+      springdoc:
+        show-actuator: true
+    ```
+  - OpenAPI can be customized by the following configurations:
+    ```
+      @Bean
+      public OpenAPI customOpenAPI() {
+          List servers = new ArrayList<Server>();
+          servers.add(new Server().url("http://localhost:8090").description("Development server"));
+
+          return new OpenAPI().components(new Components()).info(new Info()
+                  .description("<p>Provides list of REST APIs for User Account</p>")
+                  .title("API documentation for Account Service").version("1.0.0")).servers(servers);
+      }
+    ```  
 
 ### Spring Retry 
 To run a microservice, after its dependent micro services are ready
@@ -300,3 +320,6 @@ To help local development
  - API Gateway or Gateway server: By using Spring cloud netflix Zuul or Spring Cloud API Gateway or Kong API Gateway
  - Circuit Breaker: By using Ribbon or Resilience4J
  - Client side load balancing: By using Hystrix or Spring cloud load balancer
+
+ ### Design Pattern
+ - Interface driven REST Conrollers: https://www.baeldung.com/spring-interface-driven-controllers
