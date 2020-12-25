@@ -262,6 +262,18 @@ To automate the generation of API documentation
                   .title("API documentation for Account Service").version("1.0.0")).servers(servers);
       }
     ```  
+  - To generate the json format of swagger document through gradle add the below plugins and gradle configurations. Later this json file can be imported to Swagger Online Editor and save as PDF file
+    ```
+      id "com.github.johnrengelman.processes" version "0.5.0"
+      id "org.springdoc.openapi-gradle-plugin" version "1.3.0"
+
+      openApi {
+        apiDocsUrl.set("http://localhost:8090/v3/api-docs")
+        outputDir.set(file("$buildDir/docs"))
+        outputFileName.set("account-service.json")
+        waitTimeInSeconds.set(10)
+      }
+    ```  
 
 ### Spring Retry 
 To run a microservice, after its dependent micro services are ready
