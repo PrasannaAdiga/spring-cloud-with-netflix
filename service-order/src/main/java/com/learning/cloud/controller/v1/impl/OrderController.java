@@ -1,10 +1,11 @@
-package com.learning.cloud.controller;
+package com.learning.cloud.controller.v1.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learning.cloud.client.AccountClient;
 import com.learning.cloud.client.CustomerClient;
 import com.learning.cloud.client.ProductClient;
+import com.learning.cloud.controller.v1.IOrderController;
 import com.learning.cloud.entity.*;
 import com.learning.cloud.exception.ResourceNotFoundException;
 import com.learning.cloud.repository.OrderRepository;
@@ -24,20 +25,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/orders")
 @Slf4j
 @RequiredArgsConstructor
-@Validated
-public class OrderController {
+public class OrderController implements IOrderController {
     private final AccountClient accountClient;
     private final CustomerClient customerClient;
     private final ProductClient productClient;
     private final OrderRepository orderRepository;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @PostMapping
-    public ResponseEntity<Void> prepare(@Valid @RequestBody Order order) throws JsonProcessingException {
+    @Override
+    public ResponseEntity<Void> prepare(Order order) throws JsonProcessingException {
         int price = 0;
         List<Product> products = productClient.findByIds(order.getProductId());
         if(products.isEmpty()) throw new ResourceNotFoundException("Requested product with ID " + order.getProductId() + " is not available!");
@@ -64,10 +62,8 @@ public class OrderController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Order> accept(@PathVariable
-                        @Positive(message = "Order ID should be positive value")
-                                Long id) throws JsonProcessingException {
+    @Override
+    public ResponseEntity<Order> accept(Long id) throws JsonProcessingException {
         final Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + " not found!"));
         log.info("Order found: {}", objectMapper.writeValueAsString(order));
         accountClient.withdraw(order.getAccountId(), order.getPrice());
