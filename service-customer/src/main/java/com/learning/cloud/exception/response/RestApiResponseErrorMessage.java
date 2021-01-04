@@ -1,4 +1,4 @@
-package com.learning.cloud.exception.message;
+package com.learning.cloud.exception.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class RestApiErrorMessage {
+public class RestApiResponseErrorMessage {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime timestamp;
     private int status;

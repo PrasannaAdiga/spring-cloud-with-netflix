@@ -1,6 +1,6 @@
 package com.learning.cloud.exception.handler;
 
-import com.learning.cloud.exception.message.RestApiErrorMessage;
+import com.learning.cloud.exception.response.RestApiResponseErrorMessage;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Validation Errors")
                 .message(ex.getBindingResult()
@@ -35,20 +35,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         .collect(Collectors.toList()).toString())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return ResponseEntity.badRequest().body(restApiErrorMessage);
+        return ResponseEntity.badRequest().body(restApiResponseErrorMessage);
     }
 
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(
             TypeMismatchException ex, HttpHeaders headers,
             HttpStatus status, WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Type Mismatch")
                 .message(ex.getMessage())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return ResponseEntity.badRequest().body(restApiErrorMessage);
+        return ResponseEntity.badRequest().body(restApiResponseErrorMessage);
     }
 
     @Override
@@ -57,62 +57,62 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Invalid JSON")
                 .message(ex.getMessage())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return ResponseEntity.badRequest().body(restApiErrorMessage);
+        return ResponseEntity.badRequest().body(restApiResponseErrorMessage);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Malformed JSON request")
                 .message(ex.getMessage())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return ResponseEntity.badRequest().body(restApiErrorMessage);
+        return ResponseEntity.badRequest().body(restApiResponseErrorMessage);
     }
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(
             MissingServletRequestParameterException ex, HttpHeaders headers,
             HttpStatus status, WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Missing Parameters")
                 .message(ex.getMessage())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return ResponseEntity.badRequest().body(restApiErrorMessage);
+        return ResponseEntity.badRequest().body(restApiResponseErrorMessage);
     }
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Method Not Found")
                 .message(ex.getMessage())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return ResponseEntity.badRequest().body(restApiErrorMessage);
+        return ResponseEntity.badRequest().body(restApiResponseErrorMessage);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        RestApiErrorMessage restApiErrorMessage = RestApiErrorMessage.builder().timestamp(LocalDateTime.now())
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error("Method Not Allowed")
                 .message(ex.getMessage())
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
-        return new ResponseEntity<>(restApiErrorMessage, HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(restApiResponseErrorMessage, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
 }
