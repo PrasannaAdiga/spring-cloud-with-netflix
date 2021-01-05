@@ -341,6 +341,31 @@ To support circuit breaker pattern
   - Add a new class which implements feign client interface and provides a default implementation
   - Configure the fallback property of FeignClient to the above implementation class
   - So if in case the client service is not available, Hystrix will break the circuit and provide the default value as implemented in the above class
+  
+### Spring Cloud Netflix Hystrix dashboard
+To monitor Hystrix status on a dashboard
+  - Add 'spring-cloud-starter-netflix-hystrix-dashboard' dependency
+  - Add the annotation '@EnableHystrixDashboard' in the main application
+  - Access the dashboard at http://<ip_address>:<port>/hystrix
+  - We can use the tool Turbine to monitor a dashboard, if there are multiple Hystrix enabled microservices are exists
+
+### Spring Cloud Sleuth and Zipkin
+To trace microservices communication and to find slow microservices
+  - Spring Cloud Sleuth will add unique trace id and span id for each request which span across multiple microservices
+  - Later zipkin will provide a graphical user interface where each of these request can be visualized
+  - Trace id will be unique across a request, where span id will be unique between each microservice calls
+  - Add 'spring-cloud-sleuth-zipkin' dependency
+  - Configure below settings, which tells send the trace id and span id to mention Zipkin server URL over http protocol
+    ```
+        spring:
+          zipkin:
+            base-url: http://localhost:9411
+            sender:
+              type: web
+          sleuth:
+            sampler:
+              probability: 1
+    ```
 
 ### Lombok
 To add the logger details in each microservice
