@@ -1,6 +1,6 @@
 package com.learning.cloud.exception.handler;
 
-import com.learning.cloud.exception.ResourceNotFoundException;
+import com.learning.cloud.exception.custom.ResourceNotFoundException;
 import com.learning.cloud.exception.response.RestApiResponseErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

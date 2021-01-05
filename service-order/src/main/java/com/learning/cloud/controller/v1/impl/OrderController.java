@@ -2,22 +2,19 @@ package com.learning.cloud.controller.v1.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.learning.cloud.client.AccountClient;
-import com.learning.cloud.client.CustomerClient;
-import com.learning.cloud.client.ProductClient;
+import com.learning.cloud.client.IAccountServiceClient;
+import com.learning.cloud.client.ICustomerServiceClient;
+import com.learning.cloud.client.IProductServiceClient;
 import com.learning.cloud.controller.v1.IOrderController;
 import com.learning.cloud.entity.*;
-import com.learning.cloud.exception.ResourceNotFoundException;
+import com.learning.cloud.exception.custom.ResourceNotFoundException;
 import com.learning.cloud.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,19 +25,19 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class OrderController implements IOrderController {
-    private final AccountClient accountClient;
-    private final CustomerClient customerClient;
-    private final ProductClient productClient;
+    private final IAccountServiceClient iAccountServiceClient;
+    private final ICustomerServiceClient iCustomerServiceClient;
+    private final IProductServiceClient iProductServiceClient;
     private final OrderRepository orderRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public ResponseEntity<Void> prepare(Order order) throws JsonProcessingException {
         int price = 0;
-        List<Product> products = productClient.findByIds(order.getProductId());
+        List<Product> products = iProductServiceClient.findByIds(order.getProductId());
         if(products.isEmpty()) throw new ResourceNotFoundException("Requested product with ID " + order.getProductId() + " is not available!");
         log.info("Products found: {}", objectMapper.writeValueAsString(products));
-        Customer customer = customerClient.findByIdWithAccounts(order.getCustomerId());
+        Customer customer = iCustomerServiceClient.findByIdWithAccounts(order.getCustomerId());
         log.info("Customer found: {}", objectMapper.writeValueAsString(customer));
         for (Product product : products)
             price += product.getPrice();
@@ -66,7 +63,7 @@ public class OrderController implements IOrderController {
     public ResponseEntity<Order> accept(Long id) throws JsonProcessingException {
         final Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + " not found!"));
         log.info("Order found: {}", objectMapper.writeValueAsString(order));
-        accountClient.withdraw(order.getAccountId(), order.getPrice());
+        iAccountServiceClient.withdraw(order.getAccountId(), order.getPrice());
         HashMap<String, Object> logger = new HashMap<>();
         logger.put("accountId", order.getAccountId());
         logger.put("price", order.getPrice());

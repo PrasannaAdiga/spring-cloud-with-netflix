@@ -2,24 +2,20 @@ package com.learning.cloud.controller.v1.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.learning.cloud.clinet.AccountServiceClient;
+import com.learning.cloud.clinet.IAccountServiceClient;
 import com.learning.cloud.controller.v1.ICustomerController;
 import com.learning.cloud.entity.Account;
 import com.learning.cloud.entity.Customer;
 import com.learning.cloud.repository.CustomerRepository;
-import com.learning.cloud.exception.ResourceFoundException;
-import com.learning.cloud.exception.ResourceNotFoundException;
+import com.learning.cloud.exception.custom.ResourceFoundException;
+import com.learning.cloud.exception.custom.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
 import java.net.URI;
 import java.util.List;
 
@@ -28,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerController implements ICustomerController {
     private final CustomerRepository customerRepository;
-    private final AccountServiceClient accountServiceClient;
+    private final IAccountServiceClient iAccountServiceClient;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -67,7 +63,7 @@ public class CustomerController implements ICustomerController {
 
     @Override
     public ResponseEntity<Customer> findByIdWithAccounts(Long customerId) throws JsonProcessingException {
-        List<Account> accounts = accountServiceClient.findAccountsByCustomerId(customerId);
+        List<Account> accounts = iAccountServiceClient.findAccountsByCustomerId(customerId);
         log.info("Accounts found: {}", objectMapper.writeValueAsString(accounts));
         Customer customer = checkCustomer(customerId);
         customer.setAccounts(accounts);

@@ -157,7 +157,7 @@ To automate providing infrastructure and application specific metrics data
           health:
             show-details: always #To show other details in health endpoint 
     ```
-  - View the helath information at 'http://host:port/actuator/health' and information at 'http://host:port/actuator/info'
+  - View the health information at 'http://host:port/actuator/health' and information at 'http://host:port/actuator/info'
 
 ### Prometheus
 To alert and monitoring system metrics
@@ -238,15 +238,16 @@ To write application logs into a file
 ### Spring Security
 To provide authentication, authorization
  - Add the dependency 'spring-boot-starter-security'
- - By default, spring security generates a password while running the server. The default username is 'user'. Both of these can be configured through a property file
+ - By default, spring security generates a password while running the server. The default username is 'user'. Both of these can be configured through a property file.
  - Also, by default spring security enables form based and http basic authentication based authentication flow
  - The above behaviour can be customized by extending the WebSecurityConfigurerAdapter class and overriding it's methods
  - In the above custom class, we can configure Authentication Manager to read the user credentials and roles either from in memory or from databases through custom UserDetailsService and UserDetail classes
  - Also, we can configure which all APIs can be permitted to access and which all APIs are restricted to access
  - APIs which are restricted to access, needs a valid username and password to access. 
- - Once Authentication is successful, we can restrict accessing each APIs only through a valid Role. This process is called authorization
- - We can configure authorization either in the configuration class or at each class/method level through @PreAuthorize or other annotations
+ - Once Authentication is successful, we can restrict accessing each APIs only through a valid Role. This process is called authorization.
+ - We can configure authorization either in the configuration class or at each class/method level through @PreAuthorize or other annotations provide by spring security. To use these annotations we need to set '@EnableGlobalMethodSecurity(prePostEnabled = true)' in the configuration file.
  - Also, we can write custom exception handler logic for Unauthorized and Access Denied exceptions
+ - Authenticated user details can be fetched in controller by passing another argument Authentication or Principal in a method, which is provided by spring security
  
 ### Spring Docs OpenAPI
 To automate the generation of API documentation
@@ -303,7 +304,7 @@ To intercommunicate between each micro services
         List<Account> findByCustomerId(@PathVariable("customerId") Long id);
       }
     ```
-  - Also increase the connection and read timeout of feign client, so that connection timeout error can be solved, while communicating between services
+  - Also, increase the connection and read timeout of feign client, so that connection timeout error can be solved, while communicating between services
     ```
       feign:
         client:
@@ -312,6 +313,29 @@ To intercommunicate between each micro services
               connectTimeout: 160000000
               readTimeout: 160000000
     ```
+  - Feign logger works only for DEBUG and to configure it change the logger level of the class to Debug and change Feign log level to FULL
+    ```
+        logging:
+          level:
+            com.learning.cloud.clinet.IAccountServiceClient: DEBUG
+        @Bean
+            Logger.Level feignLoggerLevel() {
+                return Logger.Level.FULL;
+        
+        }
+    ```  
+  - Also, we can write custom Feign Retryer, which will retry the client service until configured number of times before throwing exception
+  - Feign provides error handling mechanism by creating a custom ErrorDecoder class and provide proper error messages for each cases
+  - But the Retryer and error handler does not work out of the box with Hystrix, as Hystrix will activate the fallback mechanism before running Retryer or error handler
+  - To support error handler with Hystrix, we can create Feign Fallback Factory by implementing FallbackFactory interface, which provides option to log caused exception details
+  
+### Spring Cloud Netflix Hystrix
+To support circuit breaker pattern
+  - Add 'spring-cloud-starter-netflix-hystrix' dependency
+  - Add the annotation '@EnableCircuitBreaker' in the main application
+  - Add a new class which implements feign client interface and provides a default implementation
+  - Configure the fallback property of FeignClient to the above implementation class
+  - So if in case the client service is not available, Hystrix will break the circuit and provide the default value as implemented in the above class
 
 ### Lombok
 To add the logger details in each microservice
