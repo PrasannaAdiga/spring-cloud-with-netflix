@@ -59,6 +59,10 @@ API gateway service - registered with discovery server - running on port 8080 - 
           config:
             uri: http://localhost:8081
   ```
+  - By default, Zuul API Gateway uses Netflix Ribbon as a client side load balancer, which will fetch list of available instances of a particular service from Eureka, and then forward the request to one of the available instance in a round robbin pattern.
+  - Common functionalities which we can implement in an API Gateway are Authentication, Authorization, Rate Limit, Service aggregation, Fault Tolerance, Logging, Caching, Monitoring etc
+  - Zuul provides a filter named 'ZuulFilter' where we can add custom logic either before or after request processed or during error which caused by request executed. 
+  
 # service-account
 Running on port 8090 - Microservice developed by using spring boot
   - Service to manage accounts of a customer. Each account belongs to a single customer.
@@ -328,6 +332,7 @@ To intercommunicate between each micro services
   - Feign provides error handling mechanism by creating a custom ErrorDecoder class and provide proper error messages for each cases
   - But the Retryer and error handler does not work out of the box with Hystrix, as Hystrix will activate the fallback mechanism before running Retryer or error handler
   - To support error handler with Hystrix, we can create Feign Fallback Factory by implementing FallbackFactory interface, which provides option to log caused exception details
+  - OpenFeign by default uses Ribbon as a client side load balancer while making client request. This can be turned off and configure it to use spring cloud load balancer instead.
   
 ### Spring Cloud Netflix Hystrix
 To support circuit breaker pattern

@@ -1,8 +1,3 @@
 #List of configurations specific to profile 'default'
 #Spring Cloud Netflix Zuul API Gateway Configuration
-zuul:
-  routes:
-    discovery-server:
-      path: /discovery-server/**
-      sensitive-headers: Set-Cookie,Authorization
-      url: http://localhost:8082
+

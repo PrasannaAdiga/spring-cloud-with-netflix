@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "account-service", fallbackFactory = AccountServiceClientFactory.class, configuration = FeignConfig.class)
+@FeignClient(name = "gateway-server", fallbackFactory = AccountServiceClientFactory.class, configuration = FeignConfig.class)
 public interface IAccountServiceClient {
-    @GetMapping("/v1/customers/{customerId}/accounts")
+    @GetMapping("account-service/v1/customers/{customerId}/accounts")
     List<Account> findAccountsByCustomerId(@PathVariable("customerId") Long id);
 }

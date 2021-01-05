@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class AccountServiceServiceClient implements IAccountServiceClient {
+public class AccountServiceClient implements IAccountServiceClient {
     private final Throwable cause;
 
-    public AccountServiceServiceClient(Throwable cause) {
+    public AccountServiceClient(Throwable cause) {
         this.cause = cause;
     }
 
