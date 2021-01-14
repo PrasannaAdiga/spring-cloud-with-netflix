@@ -6,7 +6,7 @@ import com.learning.cloud.client.IAccountServiceClient;
 import com.learning.cloud.client.ICustomerServiceClient;
 import com.learning.cloud.client.IProductServiceClient;
 import com.learning.cloud.controller.v1.IOrderController;
-import com.learning.cloud.entity.*;
+import com.learning.cloud.model.*;
 import com.learning.cloud.exception.custom.ResourceNotFoundException;
 import com.learning.cloud.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;

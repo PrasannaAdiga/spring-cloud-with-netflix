@@ -1,7 +1,7 @@
 package com.learning.cloud.controller.v1;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.learning.cloud.entity.Customer;
+import com.learning.cloud.model.Customer;
 import com.learning.cloud.exception.response.RestApiResponseErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

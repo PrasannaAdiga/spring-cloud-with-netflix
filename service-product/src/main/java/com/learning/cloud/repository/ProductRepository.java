@@ -1,6 +1,6 @@
 package com.learning.cloud.repository;
 
-import com.learning.cloud.entity.Product;
+import com.learning.cloud.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;

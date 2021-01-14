@@ -3,7 +3,7 @@ package com.learning.cloud.controller.v1.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learning.cloud.controller.v1.IProductController;
-import com.learning.cloud.entity.Product;
+import com.learning.cloud.model.Product;
 import com.learning.cloud.exception.custom.ResourceFoundException;
 import com.learning.cloud.exception.custom.ResourceNotFoundException;
 import com.learning.cloud.repository.ProductRepository;

@@ -1,0 +1,9 @@
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567890', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567891', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567892', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567893', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567894', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567895', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567896', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567897', 50000, RANDOM_UUID());
+INSERT INTO account (id, number, balance, customer_id) VALUES (RANDOM_UUID(), '1234567898', 50000, RANDOM_UUID());

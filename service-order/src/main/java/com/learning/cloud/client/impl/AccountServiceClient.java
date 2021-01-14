@@ -1,7 +1,7 @@
 package com.learning.cloud.client.impl;
 
 import com.learning.cloud.client.IAccountServiceClient;
-import com.learning.cloud.entity.Account;
+import com.learning.cloud.model.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

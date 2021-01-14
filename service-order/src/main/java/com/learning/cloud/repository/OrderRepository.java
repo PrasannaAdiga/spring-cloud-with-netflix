@@ -1,6 +1,6 @@
 package com.learning.cloud.repository;
 
-import com.learning.cloud.entity.Order;
+import com.learning.cloud.model.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

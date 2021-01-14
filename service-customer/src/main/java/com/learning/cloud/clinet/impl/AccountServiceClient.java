@@ -1,10 +1,8 @@
 package com.learning.cloud.clinet.impl;
 
 import com.learning.cloud.clinet.IAccountServiceClient;
-import com.learning.cloud.entity.Account;
-import feign.FeignException;
+import com.learning.cloud.model.Account;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

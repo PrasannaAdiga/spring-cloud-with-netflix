@@ -201,6 +201,7 @@ To write application logs into a file
   - Use validator annotations like @NotEmpty, @NotNull, @NotBlank, @Size, @Min, @Max, @Positive etc in the domain/entity classes along with proper exception message details for the user to read
   - In the RestController use the annotation @Validated at the controller level and @Valid at the method level
   - So Hibernate validator will call the validation logic once the API is called and then throws the corresponding exception if the validation fails
+  - We can also create custom validations by creating custom annotation which uses a class which implements ConstraintValidator and provides the required validation logic
   - Create a class with @RestControllerAdvice which extends the ResponseEntityExceptionHandler 
   - The above class will work as GlobalExceptionHandler where we can override any existing spring exception handling logic to provide custom logic, or we can write handler logic for our Custom User Defined exceptions
   - Here we can create exception message object with a meaningful message along with proper error code send it back to user
@@ -257,8 +258,8 @@ To provide authentication, authorization
 To automate the generation of API documentation
   - Add the dependencies 'springdoc-openapi-ui' and 'springdoc-openapi-webmvc-core'
   - Run the spring boot application
-  - Access the yml version of api doc at 'host:port/v3/api-docs'
-  - Access the html version of api doc at 'host:port/swagger-ui.html'
+  - Access the yml version of api doc at 'http://host:port/v3/api-docs'
+  - Access the html version of api doc at 'http://host:port/swagger-ui.html'
   - Adding ResponseStatus with right status code in each controller's method and each method of @ControllerAdvice will automatically create the right response codes in the doc.
   - Use the annotations @Operation, @Parameter or @ApiResponse to provide additional details in the document or to provide response details manually
   - https://www.baeldung.com/spring-rest-openapi-documentation for reference
@@ -278,6 +279,24 @@ To automate the generation of API documentation
                   .description("<p>Provides list of REST APIs for User Account</p>")
                   .title("API documentation for Account Service").version("1.0.0")).servers(servers);
       }
+    ```
+  - If spring security is added, by default user needs to enter a username and password to access this swagger ui. To disable this we can use the following configurations in to WebSecurityConfigurerAdapter class. 
+    ```
+        .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+    ```
+  - Also, If we need to enable 'Authorize' button to appear in the swagger UI, we need to use the below configurations:
+    ```
+        @Configuration
+        @SecurityScheme(
+                name = "BasicAuth", //We can also setup BearerAuth
+                type = SecuritySchemeType.HTTP,
+                scheme = "basic"
+        )
+        public class OpenAPIDocsConfig { ... }
+    ```
+  - And then in each API where we need to restrict the APIs call through Swagger, need to add the below configuration:
+    ```
+        @Operation(security = @SecurityRequirement(name = "BasicAuth")
     ```  
   - To generate the json format of swagger document through gradle add the below plugins, gradle configurations and then run the command 'gradle clean generateOpenApiDocs'. Later this json file can be imported to Swagger Online Editor and save as PDF file.
     ```
@@ -350,7 +369,7 @@ To monitor Hystrix status on a dashboard
   - We can use the tool Turbine to monitor a dashboard, if there are multiple Hystrix enabled microservices are exists
 
 ### Spring Cloud Sleuth and Zipkin
-To trace microservices communication and to find slow microservices
+To trace microservices communication and to find out the slow microservices
   - Spring Cloud Sleuth will add unique trace id and span id for each request which span across multiple microservices
   - Later zipkin will provide a graphical user interface where each of these request can be visualized
   - Trace id will be unique across a request, where span id will be unique between each microservice calls
@@ -401,3 +420,49 @@ To help local development
 
  ### Design Pattern
  - Interface driven REST Controllers: https://www.baeldung.com/spring-interface-driven-controllers
+
+### Database
+#### H2
+Database for development and testing environment
+ - Add 'spring-boot-starter-data-jpa' and 'h2' dependencies
+ - Add below configurations in application.yml
+   ```
+      h2:
+        console:
+          enabled: true
+          settings:
+            web-allow-others: false
+            trace: false
+          path: /h2-console
+      datasource:
+        url: jdbc:h2:mem:testdb
+        driver-class-name: org.h2.Driver
+        username: sa
+        password: password
+      jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+   ```
+ - Also add below configuration in WebSecurityConfigurerAdapter if we are using Spring Security. This will allow H2 page to display once logged in.
+   ```
+    http.headers().frameOptions().disable();
+   ```
+ - Access the H2 database from any browser. URL is http://localhost:8090/h2-console. If spring security is added in the project by default browser login page will be displayed. User need to enter the right username and password.
+
+### Loading initial data
+To have pre-required data in the database tables
+ - Create data.sql and schema.sql files in the classpath i.e src/main/resources
+ - Spring will automatically load these files to create the required schema and insert data 
+ - For production environment, we can make use of tools like Liquibase or Flyway
+
+### Utility Plugins
+#### Model Mapper
+To convert DTO to Entities and vice versa
+ - Add 'modelmapper' dependency
+ - Add a configuration class to create ModelMapper bean
+   ```
+        @Bean
+        public ModelMapper modelMapper() {
+            return new ModelMapper();
+        }
+   ``` 
+ - Use the method ModelMapper.map() to convert DTO's to Entities and vice versa  

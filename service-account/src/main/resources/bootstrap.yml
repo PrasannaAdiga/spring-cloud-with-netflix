@@ -6,12 +6,28 @@ spring:
   cloud:
     config:
       uri: http://localhost:8081
-      fail-fast: true
-      retry:
-        initial-interval: 60000
-        multiplier: 1.5
-        max-attempts: 1000
-        max-interval: 5000
+#      fail-fast: true
+#      retry:
+#        initial-interval: 60000
+#        multiplier: 1.5
+#        max-attempts: 1000
+#        max-interval: 5000
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: false
+        trace: false
+      path: /h2-console
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
 ---
 server:
   port: 8090

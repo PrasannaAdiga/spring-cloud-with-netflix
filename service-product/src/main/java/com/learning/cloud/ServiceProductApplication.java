@@ -1,6 +1,6 @@
 package com.learning.cloud;
 
-import com.learning.cloud.entity.Product;
+import com.learning.cloud.model.Product;
 import com.learning.cloud.repository.ProductRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

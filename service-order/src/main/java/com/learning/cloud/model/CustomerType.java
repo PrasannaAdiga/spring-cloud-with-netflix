@@ -1,4 +1,4 @@
-package com.learning.cloud.entity;
+package com.learning.cloud.model;
 
 public enum CustomerType {
     NEW, REGULER, VIP;

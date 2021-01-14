@@ -1,7 +1,7 @@
 package com.learning.cloud;
 
-import com.learning.cloud.entity.Customer;
-import com.learning.cloud.entity.CustomerType;
+import com.learning.cloud.model.Customer;
+import com.learning.cloud.model.CustomerType;
 import com.learning.cloud.repository.CustomerRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

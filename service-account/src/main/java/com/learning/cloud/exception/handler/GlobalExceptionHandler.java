@@ -10,6 +10,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -113,6 +114,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
                 .build();
         return new ResponseEntity<>(restApiResponseErrorMessage, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleServletRequestBindingException(
+            ServletRequestBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        RestApiResponseErrorMessage restApiResponseErrorMessage = RestApiResponseErrorMessage.builder().timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error("Bad Request")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI().toString())
+                .build();
+        return new ResponseEntity<>(restApiResponseErrorMessage, HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -29,7 +29,8 @@ public class CustomWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/actuator").permitAll()
+                .antMatchers("/actuator/**").permitAll()
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -40,6 +41,8 @@ public class CustomWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .formLogin()
+                .disable()
+                .headers().frameOptions()
                 .disable();
     }
 

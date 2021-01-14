@@ -1,7 +1,7 @@
 package com.learning.cloud.client;
 
 import com.learning.cloud.client.factory.AccountServiceClientFactory;
-import com.learning.cloud.entity.Account;
+import com.learning.cloud.model.Account;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;

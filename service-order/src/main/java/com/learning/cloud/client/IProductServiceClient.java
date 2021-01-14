@@ -1,7 +1,7 @@
 package com.learning.cloud.client;
 
 import com.learning.cloud.client.factory.ProductServiceClientFactory;
-import com.learning.cloud.entity.Product;
+import com.learning.cloud.model.Product;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

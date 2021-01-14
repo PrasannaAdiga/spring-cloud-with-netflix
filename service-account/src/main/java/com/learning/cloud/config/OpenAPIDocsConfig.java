@@ -1,5 +1,7 @@
 package com.learning.cloud.config;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -11,6 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@SecurityScheme(
+        name = "BasicAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "basic"
+)
 public class OpenAPIDocsConfig {
     @Bean
     public OpenAPI customOpenAPI() {

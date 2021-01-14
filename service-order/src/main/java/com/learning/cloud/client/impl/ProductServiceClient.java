@@ -1,7 +1,7 @@
 package com.learning.cloud.client.impl;
 
 import com.learning.cloud.client.IProductServiceClient;
-import com.learning.cloud.entity.Product;
+import com.learning.cloud.model.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
