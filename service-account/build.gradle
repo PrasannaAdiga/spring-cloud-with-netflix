@@ -54,6 +54,7 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus:1.6.1'
 	implementation 'net.logstash.logback:logstash-logback-encoder:6.5'
 	implementation 'org.modelmapper:modelmapper:2.3.9'
+	implementation 'org.hibernate:hibernate-envers'
 	runtimeOnly 'com.h2database:h2'
 	compileOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.springframework.boot:spring-boot-configuration-processor'

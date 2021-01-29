@@ -206,8 +206,19 @@ To write application logs into a file
   - The above class will work as GlobalExceptionHandler where we can override any existing spring exception handling logic to provide custom logic, or we can write handler logic for our Custom User Defined exceptions
   - Here we can create exception message object with a meaningful message along with proper error code send it back to user
 
+### Entity Audit and History
+For managing audit information for entities
+  - Add the dependency 'spring-boot-starter-data-jpa'
+  - Create an abstract entity class with annotation '@MappedSuperclass', which contains the fields CreatedBy, CreatedDate, LastModifiedBy and LastModifiedDate
+  - Create a spring boot configuration class with annotation '@EnableJpaAuditing' and other configuration as mentioned in the link: http://progressivecoder.com/spring-boot-jpa-auditing-example-with-auditoraware-interface/
+
+For managing history information for entities
+  - Add the dependency 'hibernate-envers'
+  - Add the annotation '@Audited' to each entity for which history information needs to be maintained
+  - This will creates bunch of extra tables for each entity to maintain its history. Refer te link: http://progressivecoder.com/setting-hibernate-envers-spring-boot/
+ 
 ### Designing REST APIs
-  - Use @RestController, @RequestMapping, @PathVariable, @RequestParam, @RequestBody, @GetMapping, @PostMapping, @PutMapping, @DeleteMapping annotations wherver required
+  - Use @RestController, @RequestMapping, @PathVariable, @RequestParam, @RequestBody, @GetMapping, @PostMapping, @PutMapping, @DeleteMapping annotations wherever required
   - Use validation related annotations on method arguments, parameters or variables to check the validations
   - Use proper log details by using @Slf4j annotation and handle the global and custom exception messages
   - Use the annotation @RequiredArgsConstructor annotation with private final fields to automatically inject the required beans by spring

@@ -1,5 +1,6 @@
 package com.learning.cloud.controller.v1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.learning.cloud.model.AccountDTO;
 import com.learning.cloud.exception.response.RestApiResponseErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,5 +36,5 @@ public interface ICustomerController {
                                                            @PathVariable("customerId")
                                                            @Size(min = 1, max = 3, message = "Customer Id must be 1 to 3 digits only")
                                                            @Positive(message = "Customer Id should be positive value")
-                                                                      UUID customerId);
+                                                                      UUID customerId) throws JsonProcessingException;
 }

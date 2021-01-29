@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -12,10 +13,11 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
+@Audited
 @NoArgsConstructor
 @Getter
 @Setter
-public class Account {
+public class Account extends Auditor<String> {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

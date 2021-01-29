@@ -1,5 +1,6 @@
 package com.learning.cloud.controller.v1.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.learning.cloud.controller.v1.ICustomerController;
 import com.learning.cloud.model.AccountDTO;
 import com.learning.cloud.service.impl.CustomerService;
@@ -16,7 +17,7 @@ public class CustomerController implements ICustomerController {
     private final CustomerService customerService;
 
     @Override
-    public ResponseEntity<List<AccountDTO>> findAccountsByCustomerId(UUID customerId) {
+    public ResponseEntity<List<AccountDTO>> findAccountsByCustomerId(UUID customerId) throws JsonProcessingException {
         return ResponseEntity.ok().body(customerService.findAllAccountByCustomerId(customerId));
     }
 
