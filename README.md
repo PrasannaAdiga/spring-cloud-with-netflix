@@ -162,6 +162,8 @@ To automate providing infrastructure and application specific metrics data
             show-details: always #To show other details in health endpoint 
     ```
   - View the health information at 'http://host:port/actuator/health' and information at 'http://host:port/actuator/info'
+  - If spring security is in the classpath, and if the above endpoints are not configured to permitAll() in the WebSecurityConfigurationAdapter file, then browser will show the login page where user needs to enter the username and password of the user to view the actuator endpoints details.
+  - If we implement spring security OAuth2 through the plugin 'spring-boot-starter-oauth2-resource-server' and if the above endpoints are not configured to permitAll(), then we must provide the valid access token for the configured user to view the details of each actuator endpoints. 
 
 ### Prometheus
 To alert and monitoring system metrics
@@ -295,7 +297,7 @@ To automate the generation of API documentation
     ```
         .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
     ```
-  - Also, If we need to enable 'Authorize' button to appear in the swagger UI, we need to use the below configurations:
+  - Also, If we need to enable 'Authorize' button with Basic Authentication to appear in the swagger UI, we need to use the below configurations:
     ```
         @Configuration
         @SecurityScheme(
@@ -305,9 +307,20 @@ To automate the generation of API documentation
         )
         public class OpenAPIDocsConfig { ... }
     ```
+  - And, If we need to enable 'Authorize' button with Bearer Token (In case of OAuth2) to appear in the swagger UI, we need to use the below configurations:
+      ```
+          @Configuration
+          @SecurityScheme(
+                  name = "bearerAuth",
+                  type = SecuritySchemeType.HTTP,
+                  scheme = "bearer",
+                  bearerFormat = "JWT"
+          )
+          public class OpenAPIDocsConfig { ... }
+      ```  
   - And then in each API where we need to restrict the APIs call through Swagger, need to add the below configuration:
     ```
-        @Operation(security = @SecurityRequirement(name = "BasicAuth")
+        @Operation(security = @SecurityRequirement(name = "BasicAuth/bearerAuth")
     ```  
   - To generate the json format of swagger document through gradle add the below plugins, gradle configurations and then run the command 'gradle clean generateOpenApiDocs'. Later this json file can be imported to Swagger Online Editor and save as PDF file.
     ```
@@ -461,10 +474,19 @@ Database for development and testing environment
 
 ### Loading initial data
 To have pre-required data in the database tables
+
+Spring Boot
  - Create data.sql and schema.sql files in the classpath i.e src/main/resources
  - Spring will automatically load these files to create the required schema and insert data 
  - For production environment, we can make use of tools like Liquibase or Flyway
 
+Flyway - Version controls for your database
+ - Add the dependency 'flyway-core'
+ - Create a new folder path 'db/migration' under the resources folder
+ - Create multiple sql scripts for creating tables or add initial data to tables. These scripts must follow particular naming conventions(with Prefix, version, separator and description) as defined by Flyway.
+ - Once we run the spring boot application, all the tables will be created with initial data.
+ - If we need to add any new tables/data, create a separate new script file with a new version.
+ 
 ### Utility Plugins
 #### Model Mapper
 To convert DTO to Entities and vice versa
